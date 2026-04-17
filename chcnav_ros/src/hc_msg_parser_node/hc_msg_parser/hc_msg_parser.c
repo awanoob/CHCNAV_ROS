@@ -70,6 +70,12 @@ static int hc__msg_deal_S21(hc__msg_parser_t *parser, hc__msg_token_t *token, un
 static int hc__msg_deal_S22(hc__msg_parser_t *parser, hc__msg_token_t *token, unsigned char c);
 static int hc__msg_deal_S23(hc__msg_parser_t *parser, hc__msg_token_t *token, unsigned char c);
 static int hc__msg_deal_S24(hc__msg_parser_t *parser, hc__msg_token_t *token, unsigned char c);
+static int hc__msg_deal_S25(hc__msg_parser_t *parser, hc__msg_token_t *token, unsigned char c);
+static int hc__msg_deal_S26(hc__msg_parser_t *parser, hc__msg_token_t *token, unsigned char c);
+static int hc__msg_deal_S27(hc__msg_parser_t *parser, hc__msg_token_t *token, unsigned char c);
+static int hc__msg_deal_S28(hc__msg_parser_t *parser, hc__msg_token_t *token, unsigned char c);
+static int hc__msg_deal_S29(hc__msg_parser_t *parser, hc__msg_token_t *token, unsigned char c);
+static int hc__msg_deal_S30(hc__msg_parser_t *parser, hc__msg_token_t *token, unsigned char c);
 
 // bind state with proc func
 static int (*g_hc__msg_state_handler[])(hc__msg_parser_t *, hc__msg_token_t *, unsigned char) = {
@@ -98,6 +104,12 @@ static int (*g_hc__msg_state_handler[])(hc__msg_parser_t *, hc__msg_token_t *, u
     [HC__STATE_S22] = hc__msg_deal_S22,
     [HC__STATE_S23] = hc__msg_deal_S23,
     [HC__STATE_S24] = hc__msg_deal_S24,
+    [HC__STATE_S25] = hc__msg_deal_S25,
+    [HC__STATE_S26] = hc__msg_deal_S26,
+    [HC__STATE_S27] = hc__msg_deal_S27,
+    [HC__STATE_S28] = hc__msg_deal_S28,
+    [HC__STATE_S29] = hc__msg_deal_S29,
+    [HC__STATE_S30] = hc__msg_deal_S30,
 };
 
 /**
@@ -132,27 +144,23 @@ int hc__msg_parser_scan(hc__msg_parser_t *parser, hc__msg_token_t *token)
             memset((void *)parser->buffer.value, 0x00, parser->buffer.end);
             parser->read_handler((void *)parser->buffer.value, parser->buffer.end, &parser->buffer.last, parser->parser_id);
             parser->buffer.pointer = 0;
-
             // wait until at least one char read
             while (parser->buffer.last <= 0)
             {
                 parser->read_handler((void *)parser->buffer.value, parser->buffer.end, &parser->buffer.last, parser->parser_id);
                 usleep(1000);
-            }
+            }  
         }
 
         unsigned char c = ((unsigned char *)parser->buffer.value)[parser->buffer.pointer];
-        // printf("state[%d] read char[0x%02x][%c]\n", parser->state, c, c);
 
         // deal all state. call func pointer
-        if (parser->state <= HC__STATE_S24 && parser->state >= HC__STATE_S0)
+        if (parser->state <= HC__STATE_S30 && parser->state >= HC__STATE_S0)
         {
-            // printf("state[%d] parser specified_len[%u]\n", parser->state, parser->specified_len);
             int pointer_move_step = g_hc__msg_state_handler[parser->state](parser, token, c);
 
             int new_token_value_len = token->token_value.value_len + pointer_move_step;
             int new_token_pointer = parser->buffer.pointer + pointer_move_step;
-            // printf("state[%d] step[%d] new_token_value_len[%d] new_token_pointer[%d] read char[0x%02x][%c] token type[%d]\n", parser->state, pointer_move_step, new_token_value_len, new_token_pointer, c, c, token->type);
 
             if (new_token_value_len < sizeof(token->token_value.value))
             {
@@ -175,10 +183,6 @@ int hc__msg_parser_scan(hc__msg_parser_t *parser, hc__msg_token_t *token)
 
         if (token->type != HC__TOKERN_NONE)
             break;
-        // {
-        //     printf("token type[%d] value_len[%u]\n", token->type, token->token_value.value_len);
-        //     break;
-        // }
     }
 
     return 0;
@@ -218,6 +222,10 @@ static int hc__msg_deal_S1(hc__msg_parser_t *parser, hc__msg_token_t *token, uns
     else if (0x55 == c)
     {
         parser->state = HC__STATE_S12;
+    }
+    else if (0x44 == c)
+    {
+        parser->state = HC__STATE_S25;
     }
     else
     {
@@ -375,7 +383,7 @@ static int hc__msg_deal_S9(hc__msg_parser_t *parser, hc__msg_token_t *token, uns
 static int hc__msg_deal_S10(hc__msg_parser_t *parser, hc__msg_token_t *token, unsigned char c)
 {
     if (parser->specified_len > 0)
-    {
+    {      
         parser->specified_len--;
     }
 
@@ -392,7 +400,6 @@ static int hc__msg_deal_S11(hc__msg_parser_t *parser, hc__msg_token_t *token, un
 {
     token->type = HC__TOKERN_HC_MSG;
     parser->state = HC__STATE_S0;
-
     return 0;
 }
 
@@ -516,7 +523,7 @@ static int hc__msg_deal_S19(hc__msg_parser_t *parser, hc__msg_token_t *token, un
     nmea_head_2[0] = token->token_value.value[1];
     nmea_head_2[1] = token->token_value.value[2];
 
-    if (strncmp(nmea_head_2, "GP", 2) == 0 || strncmp(nmea_head_2, "GN", 2) == 0 || strncmp(nmea_head_2, "BD", 2) == 0 || strncmp(nmea_head_2, "GT", 2) == 0)
+    if (strncmp(nmea_head_2, "GP") == 0 || strncmp(nmea_head_2, "GN") == 0 || strncmp(nmea_head_2, "BD") == 0 || strncmp(nmea_head_2, "GT") == 0)
     {
         if (',' == c)
             parser->state = HC__STATE_S21;
@@ -599,7 +606,7 @@ static int hc__msg_deal_S23(hc__msg_parser_t *parser, hc__msg_token_t *token, un
     nmea_end_2[0] = token->token_value.value[token->token_value.value_len - 2];
     nmea_end_2[1] = token->token_value.value[token->token_value.value_len - 1];
 
-    if (strncmp(nmea_end_2, "\r\n", 2) == 0)
+    if (strncmp(nmea_end_2, "\r\n") == 0)
     {
         parser->state = HC__STATE_S24;
     }
@@ -618,6 +625,109 @@ static int hc__msg_deal_S23(hc__msg_parser_t *parser, hc__msg_token_t *token, un
 static int hc__msg_deal_S24(hc__msg_parser_t *parser, hc__msg_token_t *token, unsigned char c)
 {
     token->type = HC__TOKERN_NMEA_MGS;
+    parser->state = HC__STATE_S0;
+
+    return 0;
+}
+
+static int hc__msg_deal_S25(hc__msg_parser_t *parser, hc__msg_token_t *token, unsigned char c)
+{
+    if (0x12 == c)
+    {
+        parser->state = HC__STATE_S26;
+    }
+    else
+    {
+        token->type = HC__TOKERN_ERROR;
+        parser->error.error_code = HC__STATE_S25;
+        snprintf(parser->error.description, sizeof(parser->error.description), "error char[0x%02x][%c]", c, c);
+
+        return 0;
+    }
+
+    return 1;
+}
+
+static int hc__msg_deal_S26(hc__msg_parser_t *parser, hc__msg_token_t *token, unsigned char c)
+{
+    if (0x1c == c)
+    {
+        parser->state = HC__STATE_S27;
+        parser->specified_len = 24;
+    }
+    else
+    {
+        token->type = HC__TOKERN_ERROR;
+        parser->error.error_code = HC__STATE_S26;
+        snprintf(parser->error.description, sizeof(parser->error.description), "error char[0x%02x][%c]", c, c);
+
+        return 0;
+    }
+
+    return 1;
+}
+
+static int hc__msg_deal_S27(hc__msg_parser_t *parser, hc__msg_token_t *token, unsigned char c)
+{
+    if (parser->specified_len > 0)
+    {
+        parser->specified_len--;
+    }
+
+    if (parser->specified_len == 0)
+    {
+        parser->state = HC__STATE_S28;
+    }
+
+    return 1;
+}
+
+static int hc__msg_deal_S28(hc__msg_parser_t *parser, hc__msg_token_t *token, unsigned char c)
+{
+    (void)c;
+
+    if (token->token_value.value_len < 28)
+    {
+        token->type = HC__TOKERN_ERROR;
+        parser->error.error_code = HC__STATE_S28;
+        snprintf(parser->error.description, sizeof(parser->error.description), "novatel header too short [%u]", token->token_value.value_len);
+
+        return 0;
+    }
+
+    {
+        unsigned char payload_len_l = (unsigned char)token->token_value.value[8];
+        unsigned char payload_len_h = (unsigned char)token->token_value.value[9];
+        parser->specified_len = ((unsigned int)payload_len_h << 8) + payload_len_l + 4;
+    }
+
+    parser->state = HC__STATE_S29;
+    return 0;
+}
+
+static int hc__msg_deal_S29(hc__msg_parser_t *parser, hc__msg_token_t *token, unsigned char c)
+{
+    (void)token;
+    (void)c;
+
+    if (parser->specified_len > 0)
+    {
+        parser->specified_len--;
+    }
+
+    if (parser->specified_len == 0)
+    {
+        parser->state = HC__STATE_S30;
+    }
+
+    return 1;
+}
+
+static int hc__msg_deal_S30(hc__msg_parser_t *parser, hc__msg_token_t *token, unsigned char c)
+{
+    (void)c;
+
+    token->type = HC__TOKERN_HC_MSG;
     parser->state = HC__STATE_S0;
 
     return 0;

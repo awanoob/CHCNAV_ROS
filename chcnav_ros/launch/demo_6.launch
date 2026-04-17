@@ -15,22 +15,21 @@
         <!-- hc_cgi_protocol_process_node -->
         <node pkg="chcnav" type="hc_cgi_protocol_process_node" name="hc_topic_driver" output="screen"/>
 
+        <node pkg="chcnav" type="bestpos_process_node" name="bestpos_process_node" output="screen"/>
+
         <!-- ntrip_server -->
         <node pkg="chcnav" type="ntrip_server_launch_node" name="ntrip_server" output="screen">
             <param name="frame_id" value="c_rs232"/>
-
-            <param name="login_type" value="user_password"/>
-
-            <param name="username" value=""/>
-            <param name="password" value="" type="string"/>
-            <param name="snkey" value=""/>
-            <param name="app_id" value=""/>
-
-            <param name="coordinate" value="CGCS2000"/>
-
-            <remap from="/chcnav/ntrip_server/differential_data" to="/chcnav/C_RS232/write"/>
+            <param name="login_type" value="third_cors"/>
+            <param name="host" value="119.3.136.126"/>
+            <param name="port" value="8002" type="string"/>
+            <param name="mountpoint" value="RTCM33"/>
+            <param name="username" value="dhjs0002"/>
+            <param name="password" value="32200004" type="string"/>
+            
+			<!-- 下面的c_rs232是frame_id，需要和上面的一致 -->
+            <remap from="/chcnav/ntrip_server/differential_data" to="/chcnav/c_rs232/write"/>
             <remap from="/chcnav/ntrip_server/ntrip_source" to="/chcnav/nmea_sentence"/>
         </node>
     </group>
 </launch>
-

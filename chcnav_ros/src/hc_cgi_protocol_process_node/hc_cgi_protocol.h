@@ -22,6 +22,7 @@ typedef enum _hc_cgi_protocol_e
     RAWGSVB = 0x0109,
     RAWNMEAB = 0x010A,
     INSPVATB = 0x0201,
+    BESTPOSB = 0x0202,
     INSPVATZCB = 0x1201,
     PINFOLTSB = 0x1301,
     PINFONZB = 0x1302,

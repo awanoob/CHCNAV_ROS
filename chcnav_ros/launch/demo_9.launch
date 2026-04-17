@@ -4,6 +4,8 @@
         <!-- hc_cgi_protocol_process_node -->
         <node pkg="chcnav" type="hc_cgi_protocol_process_node" name="hc_topic_driver" output="screen"/>
 
+        <node pkg="chcnav" type="bestpos_process_node" name="bestpos_process_node" output="screen"/>
+
         <!-- hc_msg_parser_launch_node  -->
         <node pkg="chcnav" type="hc_msg_parser_launch_node" name="c_rs232" output="screen">
             <!-- serial settings -->
@@ -13,6 +15,7 @@
             <param name="baudrate" value="460800"/>      <!-- 波特率 -->
             <!-- serial settings end -->
         </node>
+
     </group>
     
     <node pkg="chcnav" type="chcnav_fix_demo" name="chcnav_fix_demo" output="screen"/>

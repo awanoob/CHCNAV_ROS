@@ -61,6 +61,7 @@ add_message_files(
     hcinspvatzcb.msg
     hc_sentence.msg
     hcrawimub.msg
+    bestpos.msg
 )
 
 # # Generate services in the 'srv' folder
@@ -133,7 +134,7 @@ include_directories(
 )
 
 # debug flags
-option(NTRIP_SERVER_INCLUDE "option for ntrip_server" OFF)
+option(NTRIP_SERVER_INCLUDE "option for ntrip_server" ON)
 
 
 # # Declare a C++ library
@@ -247,6 +248,7 @@ endforeach(SINGLE_SOURCE_FILE)
 # node
 set(CHCNAV_NODE_SOURCES
     ${PROJECT_SOURCE_DIR}/src/hc_cgi_protocol_process_node/hc_cgi_protocol_process_node.cpp
+    ${PROJECT_SOURCE_DIR}/src/hc_cgi_protocol_process_node/bestpos_process_node.cpp
     ${PROJECT_SOURCE_DIR}/src/hc_msg_parser_node/hc_msg_parser_launch_node.cpp
     ${PROJECT_SOURCE_DIR}/src/demo/chcnav_fix_demo.cpp
     ${PROJECT_SOURCE_DIR}/src/demo/time_uniformity_node.cpp

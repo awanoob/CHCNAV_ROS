@@ -4,6 +4,8 @@
         <!-- hc_topic_driver -->
         <node pkg="chcnav" type="hc_cgi_protocol_process_node" name="hc_topic_driver" output="screen"/>
 
+        <node pkg="chcnav" type="bestpos_process_node" name="bestpos_process_node" output="screen"/>
+
         <!-- hc_topic_driver -->
         <node pkg="chcnav" type="hc_msg_parser_launch_node" name="C_RS232" output="screen">
             <!-- serial settings -->

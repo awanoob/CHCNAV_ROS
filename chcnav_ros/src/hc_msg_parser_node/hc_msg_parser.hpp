@@ -170,7 +170,19 @@ public:
                         break;
                     case HC__TOKERN_HC_MSG:
                         single_msg.msg_type = HC__MSG_CGI_HEADER;
-                        single_msg.type_value.cgi_header.msg_id = (this->token.token_value.value[7] << 8) + this->token.token_value.value[6];
+                        if ((unsigned char)this->token.token_value.value[0] == 0xaa &&
+                            (unsigned char)this->token.token_value.value[1] == 0x44 &&
+                            (unsigned char)this->token.token_value.value[2] == 0x12 &&
+                            (unsigned char)this->token.token_value.value[3] == 0x1c)
+                        {
+                            single_msg.type_value.cgi_header.msg_id = ((unsigned char)this->token.token_value.value[5] << 8) +
+                                                                       (unsigned char)this->token.token_value.value[4];
+                        }
+                        else
+                        {
+                            single_msg.type_value.cgi_header.msg_id = ((unsigned char)this->token.token_value.value[7] << 8) +
+                                                                       (unsigned char)this->token.token_value.value[6];
+                        }
                         memcpy(single_msg.value, this->token.token_value.value, this->token.token_value.value_len);
                         single_msg.value_len = this->token.token_value.value_len;
                         break;

@@ -1,0 +1,25 @@
+std_msgs/Header header
+
+uint16 gps_week_number
+uint32 gps_week_milliseconds
+uint32 sol_status
+uint32 pos_type
+float64 lat
+float64 lon
+float64 hgt
+float32 undulation
+uint32 datum_id
+float32 lat_stdev
+float32 lon_stdev
+float32 hgt_stdev
+string stn_id
+float32 diff_age
+float32 sol_age
+uint8 num_svs
+uint8 num_sol_svs
+uint8 num_sol_l1_svs
+uint8 num_sol_multi_svs
+uint8 reserved
+uint8 ext_sol_stat
+uint8 galileo_beidou_sig_mask
+uint8 gps_glonass_sig_mask

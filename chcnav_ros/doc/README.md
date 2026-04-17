@@ -7,6 +7,8 @@
 | V0.4   | 初版        | 吴其荣 | 2023-04-10 |
 | V0.4.1 | 更新udp文档 | 吴其荣 | 2023-04-18 |
 | V0.4.2 | 更新环境准备文档 | 张小镛 | 2023-08-16 |
+| V0.4.9 | 支持arm架构 | 程彦淇 | 2025-12-05 |
+| V0.4.10 | 支持解析BESTPOS协议，启动demo_9时会发布基于BESTPOS协议的fix话题 | 王延祥 | 2026-04-17 |
 
 ## 0-ROS环境准备
 
@@ -46,7 +48,7 @@ ROS驱动编译流程请参照：3-运行ros包
 
 ## 2-CGI设备设置
 
-`ROS驱动` 目前支持基于 `串口` 以及 `tcp`  的 `华测协议数据源` 的解析处理。
+`ROS驱动` 目前支持基于 `串口` 以及 `tcp`  的 `华测协议数据源` 和 `BESTPOSB` 的解析处理。
 
 - `华测协议数据源` ：指混合了 `CGI系列华测自定义协议（short header、与 header）` 以及 `以 $ 开头 *xor 校验结尾的 NMEA 协议`。只要输入的数据中包含了任一 `CGI系列华测自定义协议` 或 `NMEA协议` 的内容，都会被解析出并发布到对应话题中。
 
@@ -58,6 +60,7 @@ ROS驱动编译流程请参照：3-运行ros包
 | `华测 CGI 系列自定义协议（header）`（`HCRAWIMUB`、`HCINSPVATB`、`HCINSPVATZCB` 等） |  `hc_sentence`  |
 |                        `HCINSPVATZCB`                        |    `devpvt`     |
 |                         `HCRAWIMUB`                          |    `devimu`     |
+|                          `BESTPOSB`                          |    `bestpos`    |
 
 `ROS驱动` 获取到所需的协议数据后便会把解析后的内容发布到对应的话题中。其中：
 
@@ -65,6 +68,7 @@ ROS驱动编译流程请参照：3-运行ros包
 - `hc_sentence`: 中为 `CGI自定义协议` 二进制串。**未通过** `CRC32校验`。
 - `devpvt`: 中为 `HCINSPVATZCB` 二进制串转换成 `ros msg` 后的内容，**通过** `CRC32校验`
 - `devimu`: 中为 `HCRAWIMUB` 二进制串转换成 `ros msg` 后的内容，**通过** `CRC32校验`
+- `bestpos`: 中为 `BESTPOSB` 二进制串，**通过** `CRC32校验`
 
 因此，要使用 `ROS驱动` ，需要对 `CGI设备` 做相应的配置，使其输出 `ROS驱动` 所需的数据。
 
@@ -157,6 +161,7 @@ roslaunch chcnav demo_xxx.launch
     <group ns="chcnav">
         <!-- hc_cgi_protocol_process_node -->
         <node pkg="chcnav" type="hc_cgi_protocol_process_node" name="hc_topic_driver" output="screen"/>
+        <node pkg="chcnav" type="bestpos_process_node" name="bestpos_process_node" output="screen"/>
 
         <!-- hc_msg_parser_launch_node  -->
         <node pkg="chcnav" type="hc_msg_parser_launch_node" name="c_rs232" output="screen">
@@ -183,6 +188,7 @@ roslaunch chcnav demo_xxx.launch
     <group ns="chcnav">
         <!-- hc_cgi_protocol_process_node -->
         <node pkg="chcnav" type="hc_cgi_protocol_process_node" name="hc_topic_driver" output="screen"/>
+        <node pkg="chcnav" type="bestpos_process_node" name="bestpos_process_node" output="screen"/>
         
         <!-- hc_msg_parser_launch_node -->
         <node pkg="chcnav" type="hc_msg_parser_launch_node" name="tcp_7532" output="screen">
@@ -209,6 +215,7 @@ roslaunch chcnav demo_xxx.launch
     <group ns="chcnav">
         <!-- hc_cgi_protocol_process_node -->
         <node pkg="chcnav" type="hc_cgi_protocol_process_node" name="hc_topic_driver" output="screen"/>
+        <node pkg="chcnav" type="bestpos_process_node" name="bestpos_process_node" output="screen"/>
 
         <!-- hc_msg_parser_launch_node -->
         <node pkg="chcnav" type="hc_msg_parser_launch_node" name="udp_7531" output="screen">
@@ -234,6 +241,7 @@ roslaunch chcnav demo_xxx.launch
     <group ns="chcnav">
         <!-- hc_topic_driver -->
         <node pkg="chcnav" type="hc_cgi_protocol_process_node" name="hc_topic_driver" output="screen"/>
+        <node pkg="chcnav" type="bestpos_process_node" name="bestpos_process_node" output="screen"/>
 
         <!-- tcp -->
         <node pkg="chcnav" type="hc_msg_parser_launch_node" name="tcp_7532" output="screen">
@@ -274,6 +282,7 @@ roslaunch chcnav demo_xxx.launch
         
         <!-- hc_topic_driver -->
         <node pkg="chcnav" type="hc_cgi_protocol_process_node" name="hc_topic_driver" output="screen"/>
+        <node pkg="chcnav" type="bestpos_process_node" name="bestpos_process_node" output="screen"/>
 
         <!-- hc_msg_parser_launch_node -->
         <node pkg="chcnav" type="hc_msg_parser_launch_node" name="file" output="screen">
@@ -365,6 +374,7 @@ catkin_make
     <group ns="chcnav">
         <!-- hc_cgi_protocol_process_node -->
         <node pkg="chcnav" type="hc_cgi_protocol_process_node" name="hc_topic_driver" output="screen"/>
+        <node pkg="chcnav" type="bestpos_process_node" name="bestpos_process_node" output="screen"/>
 
         <!-- hc_msg_parser_launch_node  -->
         <node pkg="chcnav" type="hc_msg_parser_launch_node" name="c_rs232" output="screen">
@@ -381,7 +391,7 @@ catkin_make
 </launch>
 ```
 
-`demo_9` ，为一个将 `devpvt` 话题信息转换成  `sensor_msgs::Imu` 与 `sensor_msgs::NavSatFix` 数据使用的`demo`。
+`demo_9` ，为一个将 `devpvt` 话题信息转换成  `sensor_msgs::Imu` 与 `sensor_msgs::NavSatFix` 数据使用的`demo`。也会将 `dbestpos` 话题信息转换成 `bestpos/fix` 话题。
 运行 rosrun rviz rviz，再add添加imu，最后在imu->Topic中选择对应的话题
 
 
@@ -399,6 +409,7 @@ wqr@:ubuntu~/Desktop/chcnav_driver_demo$ rostopic list
 # /chcnav/devpvt			
 # /chcnav/hc_sentence
 # /chcnav/nmea_sentence
+# /chcnav/bestpos
 ```
 
 
@@ -842,6 +853,8 @@ int8[] data     # 二进制数据，长度可以使用 data.size() 查看
 该库路径为 `src/hc_msg_parser_node/hc_msg_parser` ，使用 `有限自动机` 算法，状态图如下：
 
 ![自动机状态图](images/自动机状态图.png)
+
+注：现在算法有更新，添加了解析 Novatel 协议头的内容。
 
 ### 6.2 `devpvt` 消息时间戳
 
