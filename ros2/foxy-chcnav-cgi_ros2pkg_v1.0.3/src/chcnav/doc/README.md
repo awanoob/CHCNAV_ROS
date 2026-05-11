@@ -2,24 +2,20 @@
 
 ## 文件更改履历表
 
-| 版本   | 更改说明          | 更改人  | 更改日期   |
-| ------ | ----------------- | ------- | ---------- |
-| V0.4   | 初版              | 吴其荣  | 2023-04-10 |
-| V0.4.1 | 更新udp文档       | 吴其荣  | 2023-04-18 |
-| V0.4.2 | 更新环境准备文档  | 张小镛  | 2023-08-16 |
-| V1.0.0 | ROS2 使用说明文档 | 张小镛  | 2023-10-09 |
-| V1.0.3 | 支持galactic版本  | 张小镛  | 2024-12-05 |
-| V1.0.4 | 支持humble版本    | Copilot | 2024-12-06 |
+| 版本   | 更改说明    | 更改人 | 更改日期   |
+| ------ | ----------- | ------ | ---------- |
+| V0.4   | 初版        | 吴其荣 | 2023-04-10 |
+| V0.4.1 | 更新udp文档 | 吴其荣 | 2023-04-18 |
+| V0.4.2 | 更新环境准备文档 | 张小镛 | 2023-08-16 |
+| V1.0.0 | ROS2 使用说明文档 | 张小镛 | 2023-10-09 |
+| V1.0.3 | 支持arm架构 | 程彦淇 | 2025-12-05 |
+
 ## 0-ROS2环境准备
 
 参考`ROS2官网`教程及其他网络资料。
 
 - `ROS2官方文档` : `https://docs.ros.org/en/foxy`
-- 仅支持：`ros2-foxy`、`ros2-galactic`和`ros2-humble`版本 （`Ubuntu20.04/22.04`）
-
-> **Humble兼容性说明**  
-> 本驱动已适配`ros2-humble`，如需在Humble下编译和运行，请确保依赖包均已安装，且使用`colcon build`编译。  
-> 主要区别为`package.xml`和`CMakeLists.txt`依赖项的微调，代码本身无需大幅修改。
+- 仅支持：`ros-foxy`版本 （`Ubuntu20.04`）
 
 注意：`ROS2驱动` 依赖一些外部 `ROS2包` ，基础的 `ros2-base` 版本缺失这些依赖项，所有推荐直接安装 `desktop-full` 版本的。（当然也可以安装 `ros2-base` 版本后再安装依赖）
 
@@ -39,13 +35,6 @@ ROS2 foxy版本环境准备参考流程：
 13. sudo apt install ros-foxy-desktop python3-argcomplete
 14. source /opt/ros/foxy/setup.bash
 15. echo "source /opt/ros/foxy/setup.bash" >> ~/.bashrc
-
-ROS2 galactic版本环境准备参考流程(参考链接：https://blog.csdn.net/baidu_41617231/article/details/135077025)：
-1.  终端输入：wget http://fishros.com/install -O fishros && bash fishros
-按照提示更新源并一键安装ROS2 galactic
-2.  输入以下命令测试是否安装成功
-source /opt/ros/galactic/setup.bash
-ros2 run demo_nodes_cpp talker
 
 ROS2驱动的编译流程请参照：3-运行ros2包
 
@@ -69,12 +58,12 @@ ROS2驱动的编译流程请参照：3-运行ros2包
 
 各个协议类型与 `ROS2话题` 对应的关系表如下：
 
-|                                        协议                                         |      话题       |
-| :---------------------------------------------------------------------------------: | :-------------: |
-|              `NMEA`（`GGA`、`CHC`、`RMC` 等 $ 开头异或校验结尾的数据）              | `nmea_sentence` |
+|                             协议                             |      话题       |
+| :----------------------------------------------------------: | :-------------: |
+|  `NMEA`（`GGA`、`CHC`、`RMC` 等 $ 开头异或校验结尾的数据）   | `nmea_sentence` |
 | `华测 CGI 系列自定义协议（header）`（`HCRAWIMUB`、`HCINSPVATB`、`HCINSPVATZCB` 等） |  `hc_sentence`  |
-|                                   `HCINSPVATZCB`                                    |    `devpvt`     |
-|                                     `HCRAWIMUB`                                     |    `devimu`     |
+|                        `HCINSPVATZCB`                        |    `devpvt`     |
+|                         `HCRAWIMUB`                          |    `devimu`     |
 
 `ROS2驱动` 获取到所需的协议数据后便会把解析后的内容发布到对应的话题中。其中：
 
@@ -1022,8 +1011,6 @@ cd src/chcnav/scripts
 可以得到，丢包发生 `1次`（数波峰数量），丢包数量为（`(40-10)/10=3`包）。
 
 丢包情况只可从 `devpvt_time_record` 、`devimu_time_record` 这两个文件的分析结果中得到。（因为这两个话题时间记录的是 `gps时间`）
-
-
 
 ### 7.5-串口时间均匀度问题
 

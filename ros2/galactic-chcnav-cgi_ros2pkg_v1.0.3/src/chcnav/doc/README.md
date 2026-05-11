@@ -8,34 +8,17 @@
 | V0.4.1 | 更新udp文档 | 吴其荣 | 2023-04-18 |
 | V0.4.2 | 更新环境准备文档 | 张小镛 | 2023-08-16 |
 | V1.0.0 | ROS2 使用说明文档 | 张小镛 | 2023-10-09 |
-| V1.0.3 | 支持galactic版本 | 张小镛 | 2024-12-05 |
+| V1.0.3 | 支持galactic版本及arm架构 | 张小镛 | 2024-12-05 |
 ## 0-ROS2环境准备
 
 参考`ROS2官网`教程及其他网络资料。
 
-- `ROS2官方文档` : `https://docs.ros.org/en/foxy`
-- 仅支持：`ros2-foxy`和`ros2-galactic`版本 （`Ubuntu20.04`）
+- `ROS2官方文档` : `https://docs.ros.org/en/galactic`
+- 仅支持：`ros2-galactic`版本 （`Ubuntu20.04`）
 
 注意：`ROS2驱动` 依赖一些外部 `ROS2包` ，基础的 `ros2-base` 版本缺失这些依赖项，所有推荐直接安装 `desktop-full` 版本的。（当然也可以安装 `ros2-base` 版本后再安装依赖）
 
-ROS2 foxy版本环境准备参考流程：
-1.  在Ubuntu官网下载ubuntu-20.04.6-desktop-amd64.iso镜像文件
-2.  在VMWare软件中新建Ubuntu20.4版本虚拟机 推荐配置：内存选择8G 硬盘100G 
-3.  检查是否能访问外网  终端输入：ping www.baidu.com （不能连接外网可以尝试将虚拟机->设置—->网络连接 修改为桥接模式并重启虚拟机）
-4.  sudo apt update && sudo apt install locales
-5.  sudo locale-gen en_US en_US.UTF-8
-6.  sudo update-locale LC_ALL=en_US.UTF-8 LANG=en_US.UTF-8
-7.  export LANG=en_US.UTF-8
-8.  sudo apt install software-properties-common
-9.  sudo add-apt-repository universe
-10. sudo apt update && sudo apt install curl gnupg2 lsb-release
-11. curl http://repo.ros2.org/repos.key | sudo apt-key add - 
-12. sudo sh -c 'echo "deb [arch=$(dpkg --print-architecture)] http://mirror.tuna.tsinghua.edu.cn/ros2/ubuntu $(lsb_release -cs) main" > /etc/apt/sources.list.d/ros2-latest.list'
-13. sudo apt install ros-foxy-desktop python3-argcomplete
-14. source /opt/ros/foxy/setup.bash
-15. echo "source /opt/ros/foxy/setup.bash" >> ~/.bashrc
-
-ROS2 galactic版本环境准备参考流程(参考链接：https://blog.csdn.net/baidu_41617231/article/details/135077025)：
+ROS2 galactic版本环境准备参考流程：
 1.  终端输入：wget http://fishros.com/install -O fishros && bash fishros
 按照提示更新源并一键安装ROS2 galactic
 2.  输入以下命令测试是否安装成功
@@ -426,7 +409,7 @@ ros2 launch ~/ros2_ws/src/chcnav/launch/demo_1.xml
 
 `demo_9` ，为一个将 `devpvt` 话题信息转换成  `sensor_msgs::msg::Imu` 与 `sensor_msgs::msg::NavSatFix` 数据使用的`demo`。
 在RViz2中获取IMU数据，首先需要另外安装专门用于支持Imu消息显示的插件imu-tools：
-终端运行： sudo apt-get install ros-foxy-imu-tools
+终端运行： sudo apt-get install ros-galatic-imu-tools
 终端运行： ros2 run rviz2 rviz2，再点击 `add` 按钮添加 `imu` ，最后在 `imu->Topic` 中选择话题 `/imu`
 
 注意："HcMsgParserLaunchNode"节点的name命名不要用大写字母开头, 也不要带特殊字符，如下划线“_”，否则可能导致demo_9无法正常使用，此时终端会提示[rviz]: Message Filter dropping message: frame 'c_rs232' at time 1696749884.520 for reason 'Unknown'
