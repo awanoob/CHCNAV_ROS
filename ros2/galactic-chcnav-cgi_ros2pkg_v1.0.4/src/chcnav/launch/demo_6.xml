@@ -1,0 +1,32 @@
+<launch>
+    <!-- hc_msg_parser_launch_node  -->
+    <node pkg="chcnav" exec="HcMsgParserLaunchNode" name="c_rs232" output="screen">
+        <!-- serial settings -->
+        <param name="type" value="serial"/>
+        <param name="rate" value="1000"/>
+        <param name="port" value="/dev/ttyUSB0"/>
+        <param name="baudrate" value="115200"/>
+        <!-- serial settings end -->
+    </node>
+
+    <!-- hc_cgi_protocol_process_node -->
+    <node pkg="chcnav" exec="HcCgiProtocolProcessNode" name="hc_topic_driver" output="screen"/>
+
+    <!-- ntrip_server -->
+    <node pkg="chcnav" exec="NtripServerLaunchNode" name="ntrip_server" output="screen">
+        <param name="frame_id" value="c_rs232"/>
+
+        <param name="login_type" value="third_cors"/>
+
+        <param name="host" value="119.3.136.126"/>
+        <param name="port" value="8002" type="str"/>
+        <param name="mountpoint" value="RTCM33"/>
+        <param name="username" value="dhjs0002"/>
+        <param name="password" value="32200004" type="str"/>
+
+        <remap from="/differential_data" to="/write"/>
+        <remap from="/ntrip_source" to="/chcnav/nmea_sentence"/>
+    </node>
+
+</launch>
+
