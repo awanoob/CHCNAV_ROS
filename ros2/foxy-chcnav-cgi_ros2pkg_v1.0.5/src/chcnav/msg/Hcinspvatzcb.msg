@@ -25,8 +25,8 @@ geometry_msgs/Vector3 vehicle_linear_velocity               # 车辆 xyz 速度 
 geometry_msgs/Vector3 vehicle_linear_acceleration           # 车辆 xyz 加速度 有重力 (m/s2)
 geometry_msgs/Vector3 vehicle_linear_acceleration_without_g # 车辆 xyz 加速度，无重力
 
-geometry_msgs/Vector3 raw_angular_velocity                  # 设备原始 xyz 角速度 (deg/s)
-geometry_msgs/Vector3 raw_acceleration                      # 设备原始 xyz 加速度 有重力
+geometry_msgs/Vector3 raw_angular_velocity                  # 设备原始 xyz 角速度 (deg/s)，车辆坐标系
+geometry_msgs/Vector3 raw_acceleration                      # 设备原始 xyz 加速度 有重力，车辆坐标系
 
 # 状态 
 # stat[0] 组合状态 
