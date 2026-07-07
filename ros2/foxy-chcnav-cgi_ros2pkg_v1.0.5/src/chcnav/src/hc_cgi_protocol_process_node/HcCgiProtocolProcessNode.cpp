@@ -218,10 +218,10 @@ static void msg_deal__hcrawimuib(const msg_interfaces::msg::HcSentence::ConstPtr
         devimu.angular_velocity.y = *((float *)(&msg->data[36]));
         devimu.angular_velocity.z = *((float *)(&msg->data[40]));
 
-        // xyz角角速度 g
-        devimu.angular_acceleration.x = *((float *)(&msg->data[44]));
-        devimu.angular_acceleration.y = *((float *)(&msg->data[48]));
-        devimu.angular_acceleration.z = *((float *)(&msg->data[52]));
+        // xyz加速度 g
+        devimu.linear_acceleration.x = *((float *)(&msg->data[44]));
+        devimu.linear_acceleration.y = *((float *)(&msg->data[48]));
+        devimu.linear_acceleration.z = *((float *)(&msg->data[52]));
 
         // 温度
         devimu.temp = *((float *)(&msg->data[56]));
@@ -251,10 +251,10 @@ static void msg_deal__hcrawimuib(const msg_interfaces::msg::HcSentence::ConstPtr
         devimu.angular_velocity.y = ((float)*((short *)(&msg->data[16]))) / 80.0;
         devimu.angular_velocity.z = ((float)*((short *)(&msg->data[18]))) / 80.0;
 
-        // xyz角角速度 g
-        devimu.angular_acceleration.x = ((float)*((short *)(&msg->data[20]))) / 5000.0;
-        devimu.angular_acceleration.y = ((float)*((short *)(&msg->data[22]))) / 5000.0;
-        devimu.angular_acceleration.z = ((float)*((short *)(&msg->data[24]))) / 5000.0;
+        // xyz加速度 g
+        devimu.linear_acceleration.x = ((float)*((short *)(&msg->data[20]))) / 5000.0;
+        devimu.linear_acceleration.y = ((float)*((short *)(&msg->data[22]))) / 5000.0;
+        devimu.linear_acceleration.z = ((float)*((short *)(&msg->data[24]))) / 5000.0;
 
         // 温度
         devimu.temp = ((float)*((short *)(&msg->data[26]))) / 100.0;

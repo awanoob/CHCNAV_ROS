@@ -155,9 +155,9 @@ static void devimu_sentence_callback(const msg_interfaces::msg::Hcrawimub::Const
     fprintf(gs_fp__devimu_time_record, "%lf,", msg->angular_velocity.x);
     fprintf(gs_fp__devimu_time_record, "%lf,", msg->angular_velocity.y);
     fprintf(gs_fp__devimu_time_record, "%lf,", msg->angular_velocity.z);
-    fprintf(gs_fp__devimu_time_record, "%lf,", msg->angular_acceleration.x);
-    fprintf(gs_fp__devimu_time_record, "%lf,", msg->angular_acceleration.y);
-    fprintf(gs_fp__devimu_time_record, "%lf,", msg->angular_acceleration.z);
+    fprintf(gs_fp__devimu_time_record, "%lf,", msg->linear_acceleration.x);
+    fprintf(gs_fp__devimu_time_record, "%lf,", msg->linear_acceleration.y);
+    fprintf(gs_fp__devimu_time_record, "%lf,", msg->linear_acceleration.z);
     fprintf(gs_fp__devimu_time_record, "%lf,", msg->temp);
     fprintf(gs_fp__devimu_time_record, "%d,", msg->err_status);
     fprintf(gs_fp__devimu_time_record, "%d", msg->yaw);
